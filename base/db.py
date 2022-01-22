@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from pprint import pprint
+from datetime import datetime
 
 # Create MongoDB Client
 client = MongoClient("mongodb://127.0.0.1:27017")
@@ -15,6 +16,6 @@ db = client.boilermake
 # pprint(db.users.find_one({}))
 
 def insert_observation(temp, hum, pres, alt, sound, ser_num):
-    obs = {'sn': ser_num, 'Temperature': temp, 'Humidity': hum, "Pressure": pres, "Altitude": alt, "Sound": sound}
+    obs = {'sn': ser_num, 'temperature': temp, 'humidity': hum, "pressure": pres, "altitude": alt, "sound": sound, 'time': datetime.now()}
 
     db.observations.insert_one(obs)

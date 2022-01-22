@@ -7,7 +7,9 @@
 //Air pressure detection
 #include "Seeed_BMP280.h"
 #include <Wire.h>
- 
+
+uint32_t MSL = 102009; // Mean Sea Level in Pa
+
 BMP280 bmp280;
 
 //Temperature and Humidity Sensor
@@ -77,6 +79,18 @@ void serialEvent() {
   }
 }
 
+float calculateAltitudeCustom(float p0, float p1, float t) {
+  float C;
+
+  C = (p0 / p1);
+
+  C = pow(C, (1 / 5.25588)) - 1.0;
+
+  C = (C * (t + 273.15)) / 0.0065;
+
+  return C;
+}
+
 /* Global variables for counting cycles and totals */
 double temperature = 0.0;
 double humidity = 0.0;
@@ -88,17 +102,14 @@ unsigned long count = 0;
 void loop(void) {
   u8x8.setFont(u8x8_font_chroma48medium8_r);
   u8x8.setCursor(0, 1);
-//  for (int i = 0; i < 8; i++) {
-//    u8x8.print(UniqueID8[i], HEX);
-//  }
-//  u8x8.println("");
  
   float temp1, humi, temp2, pres, alti, soundState;
   temp1 = dht.readTemperature();
   humi = dht.readHumidity();
   temp2 = bmp280.getTemperature();
-  pres = bmp280.getPressure() / 1000;
-  alti = bmp280.calcAltitude(pres);
+  pres = bmp280.getPressure();
+  alti = calculateAltitudeCustom(MSL, pres, temp2);
+  pres /= 1000;
   soundState = (float) analogRead(soundPin) / 10; // Read sound sensor’s value
 
   u8x8.print("Temp: ");
