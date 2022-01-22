@@ -97,9 +97,9 @@ void loop(void) {
   temp1 = dht.readTemperature();
   humi = dht.readHumidity();
   temp2 = bmp280.getTemperature();
-  pres = bmp280.getPressure();
+  pres = bmp280.getPressure() / 1000;
   alti = bmp280.calcAltitude(pres);
-  soundState = analogRead(soundPin); // Read sound sensor’s value
+  soundState = (float) analogRead(soundPin) / 10; // Read sound sensor’s value
 
   u8x8.print("Temp: ");
   u8x8.print(temp2);
@@ -110,7 +110,7 @@ void loop(void) {
   u8x8.println("%");
 
   u8x8.print("Pres: ");
-  u8x8.print(pres / 1000);
+  u8x8.print(pres);
   u8x8.println("kPa");
 
   u8x8.print("Alti: ");
