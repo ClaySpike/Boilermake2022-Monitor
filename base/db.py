@@ -18,12 +18,3 @@ def insert_observation(temp, hum, pres, alt, sound, ser_num):
     obs = {'sn': ser_num, 'Temperature': temp, 'Humidity': hum, "Pressure": pres, "Altitude": alt, "Sound": sound}
 
     db.observations.insert_one(obs)
-
-def get_all():
-    observations = []
-    for obs in db.observations.find({}):
-        observations.append(obs)
-    
-    return observations
-
-# print(get_all())

@@ -1,9 +1,33 @@
 import serial
+from serial.tools import list_ports
 import db
 import time
 import sys
 
-ser = serial.Serial('/dev/cu.usbserial-0001', 9600, timeout=3)
+counter = 1
+dev_array = []
+for i in serial.tools.list_ports.comports():
+	print(f'{counter}) {i.name}')
+	dev_array.append(i.device)
+	counter += 1
+
+dev_num = -1
+
+try:
+	dev_num = int(input("Select which serial device to use: ")) - 1
+except (TypeError, ValueError):
+	print("Input must be a number")
+	sys.exit()
+
+if dev_num >= counter or dev_num <= 0:
+	print(f"Input must be in the range 1...{counter - 1}")
+	sys.exit()
+
+dev_name = dev_array[dev_num]
+
+print(f'Selected {dev_name}')
+
+ser = serial.Serial(dev_name, 9600, timeout=3)
 
 sys.stdout.write('Waiting for Arduino to boot...')
 sys.stdout.flush()
