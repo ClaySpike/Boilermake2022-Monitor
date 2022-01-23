@@ -109,7 +109,14 @@ function App() {
             <Button>Testing</Button>
           </Row>
           <Row>
-            <Line ref={chartRef} datasetIdKey='id' data={testing} options={options} />
+            <div class="grid-container">
+              <div class="grid-item"><Line ref={chartRef} datasetIdKey='id' data={testing} options={options} /></div>
+              <div class="grid-item"><Line ref={chartRef} datasetIdKey='id' data={testing} options={options} /></div>
+            </div>
+            <div class="grid-container">
+              <div class="grid-item"><Line ref={chartRef} datasetIdKey='id' data={testing} options={options} /></div>
+              <div class="grid-item"><Line ref={chartRef} datasetIdKey='id' data={testing} options={options} /></div>
+            </div>
           </Row>
         </Row>
       </Container>

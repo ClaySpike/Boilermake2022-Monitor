@@ -28,6 +28,15 @@
   color: #61dafb;
 }
 
+.grid-container {
+  display: flex;
+}
+
+.grid-item {
+  flex: 1;
+  flex-basis: 100%;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
