@@ -111,6 +111,66 @@ const testing = {
   ]
 }
 
+const tempData = {
+  labels: [],
+  datasets: [
+    {
+      label: 'Temperature',
+      data: [],
+      borderColor: 'rgb(255, 99, 132)',
+      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+    }
+  ]
+}
+
+const humiData = {
+  labels: [],
+  datasets: [
+    {
+      label: 'Humidity',
+      data: [],
+      borderColor: 'rgb(255, 99, 132)',
+      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+    }
+  ]
+}
+
+const altiData = {
+  labels: [],
+  datasets: [
+    {
+      label: 'Altitude',
+      data: [],
+      borderColor: 'rgb(255, 99, 132)',
+      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+    }
+  ]
+}
+
+const presData = {
+  labels: [],
+  datasets: [
+    {
+      label: 'Air Pressure',
+      data: [],
+      borderColor: 'rgb(255, 99, 132)',
+      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+    }
+  ]
+}
+
+const soundData = {
+  labels: [],
+  datasets: [
+    {
+      label: 'Sound Level',
+      data: [],
+      borderColor: 'rgb(255, 99, 132)',
+      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+    }
+  ]
+}
+
 function addData(chart, label, newData) {
   if (chart) {
     chart.data.labels.push(label);
@@ -130,7 +190,7 @@ function addData(chart, label, newData) {
 }
 
 function App() {
-  const [data, setData] = useState(testing);
+  const [serial, setSerial] = useState([]);
 
   const tempRef = useRef(null);
   const humiRef = useRef(null);
@@ -140,21 +200,94 @@ function App() {
 
   var counter = 20.0;
 
+  useEffect(async () => {
+    fetch('http://localhost:8080/serials')
+      .then((response) => response.json())
+      .then((data) => setSerial(data));
+  }, []);
+
   useEffect(() => {
-    setTimeout(() => {
-      addData(tempRef.current, `${counter}`, counter);
-    }, 1000);
+    const sse = new EventSource('http://localhost:8080/stream');
+
+    function updateCharts(data) {
+      tempRef.current.data.labels.push("");
+
+      tempRef.current.data.datasets.forEach((dataset) => {
+        if (dataset.data.length >= 24) {
+          tempRef.current.data.labels.shift();
+          dataset.data.shift();
+        }
+        dataset.data.push(data.temperature);
+      });
+      tempRef.current.update();
+
+      humiRef.current.data.labels.push("");
+
+      humiRef.current.data.datasets.forEach((dataset) => {
+        if (dataset.data.length >= 24) {
+          humiRef.current.data.labels.shift();
+          dataset.data.shift();
+        }
+        dataset.data.push(data.humidity);
+      });
+      humiRef.current.update();
+
+      altiRef.current.data.labels.push("");
+
+      altiRef.current.data.datasets.forEach((dataset) => {
+        if (dataset.data.length >= 24) {
+          altiRef.current.data.labels.shift();
+          dataset.data.shift();
+        }
+        dataset.data.push(data.altitude);
+      });
+      altiRef.current.update();
+
+      presRef.current.data.labels.push("");
+
+      presRef.current.data.datasets.forEach((dataset) => {
+        if (dataset.data.length >= 24) {
+          presRef.current.data.labels.shift();
+          dataset.data.shift();
+        }
+        dataset.data.push(data.pressure);
+      });
+      presRef.current.update();
+
+      soundRef.current.data.labels.push("");
+
+      soundRef.current.data.datasets.forEach((dataset) => {
+        if (dataset.data.length >= 24) {
+          soundRef.current.data.labels.shift();
+          dataset.data.shift();
+        }
+        dataset.data.push(data.sound);
+      });
+      soundRef.current.update();
+    }
+
+    sse.onmessage = (e) => {
+      updateCharts(JSON.parse(e.data));
+    }
+
+    sse.onerror = () => {
+      sse.close();
+    };
+
+    return () => {
+      sse.close();
+    };
   }, []);
 
   return (
     <>
       <Navbar bg="dark">
         <Container>
-          <Navbar.Brand className="text-light"><img src={logo} className="App-logo"/> Working Title Lol </Navbar.Brand>
+          <Navbar.Brand className="text-light"><img src={logo} className="App-logo"/> Room Monitoring System </Navbar.Brand>
           <DropdownButton id="dropdown-basic-button" title="Serial Numbers">
-            <Dropdown.Item href="#/action-1">Serial Number 1</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">Serial Number 2</Dropdown.Item>
-            <Dropdown.Item href="#/action-3">Serial Number 3</Dropdown.Item>
+            {serial.map((item, index) => {
+              return <Dropdown.Item>{item}</Dropdown.Item>
+            })}
           </DropdownButton>
         </Container>
       </Navbar>
@@ -162,15 +295,15 @@ function App() {
         <Row className="justify-content-center">
           <Row>
             <div class="grid-container">
-              <div class="grid-item"><Line ref={tempRef} datasetIdKey='id' data={testing} options={optionsTemp} /></div>
-              <div class="grid-item"><Line ref={humiRef} datasetIdKey='id' data={testing} options={optionsHumi} /></div>
+              <div class="grid-item"><Line ref={tempRef} datasetIdKey='temp' data={tempData} options={optionsTemp} /></div>
+              <div class="grid-item"><Line ref={humiRef} datasetIdKey='humi' data={humiData} options={optionsHumi} /></div>
             </div>
             <div class="grid-container">
-              <div class="grid-item"><Line ref={presRef} datasetIdKey='id' data={testing} options={optionsPres} /></div>
-              <div class="grid-item"><Line ref={altiRef} datasetIdKey='id' data={testing} options={optionsAlti} /></div>
+              <div class="grid-item"><Line ref={presRef} datasetIdKey='pres' data={presData} options={optionsPres} /></div>
+              <div class="grid-item"><Line ref={altiRef} datasetIdKey='alti' data={altiData} options={optionsAlti} /></div>
             </div>
             <div class="grid-container">
-              <div class="grid-item"><Line ref={soundRef} datasetIdKey='id' data={testing} options={optionsSound} /></div>
+              <div class="grid-item"><Line ref={soundRef} datasetIdKey='sound' data={soundData} options={optionsSound} /></div>
             </div>
           </Row>
         </Row>

@@ -6,6 +6,8 @@ var sse = require('./sse');
 /* GET data page. */
 router.get('/data', queryController.findByQuery);
 
+router.get('/serials', queryController.findUniqueSer);
+
 /* Get SSE page*/
 router.get('/stream', sse.stream);
 

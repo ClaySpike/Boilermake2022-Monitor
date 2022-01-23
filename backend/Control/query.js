@@ -15,3 +15,7 @@ exports.findByQuery = async (req, res) => {
 
     res.send(await Observation.find(query).setOptions({sort: {_id: "-1"}}).limit(20));
 };
+
+exports.findUniqueSer = async (req, res) => {
+    res.send(await Observation.distinct('sn'));
+};

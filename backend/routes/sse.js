@@ -5,7 +5,7 @@ const listeners = [];
 Observations.watch()
     .on('change', (data) => {
         listeners.forEach((listener) => {
-            listener.write(`data: ${JSON.stringify(data.fullDocument)}\n`);
+            listener.write(`data: ${JSON.stringify(data.fullDocument)}\n\n`);
         });
     });
 
