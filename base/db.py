@@ -3,7 +3,8 @@ from pprint import pprint
 from datetime import datetime
 
 # Create MongoDB Client
-client = MongoClient("mongodb+srv://admin:adminpassword@cluster0.1tmoe.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+client = MongoClient("mongodb+srv://admin:adminpassword@cluster0.1tmoe.mongodb.net/boilermake", tls=True, tlsAllowInvalidCertificates=True)
+# client = MongoClient("mongodb://127.0.0.1")
 
 # Select the correct database from the connection
 db = client.boilermake

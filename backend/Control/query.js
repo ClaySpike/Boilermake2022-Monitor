@@ -13,5 +13,5 @@ exports.findByQuery = async (req, res) => {
         query = {'sn': req.query.sn};
     }
 
-    res.send(await Observation.find(query));
+    res.send(await Observation.find(query).setOptions({sort: {_id: "-1"}}).limit(20));
 };

@@ -42,7 +42,8 @@ module.exports = app;
 done = {}
 
 db.mongoose
-  .connect("mongodb+srv://admin:adminpassword@cluster0.1tmoe.mongodb.net/boilermake2022?retryWrites=true&w=majority")
+  .connect("mongodb+srv://admin:adminpassword@cluster0.1tmoe.mongodb.net/boilermake?retryWrites=true&w=majority")
+  // .connect("mongodb://127.0.0.1:27017")
   .then(() => {
     console.log("Successfully connected to the database");
     done.mongo = true;
