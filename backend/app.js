@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const db = require('./models/index');
 
 var indexRouter = require('./routes/index');
 
@@ -37,3 +38,19 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+done = {}
+
+db.mongoose
+  .connect("mongodb+srv://admin:adminpassword@cluster0.1tmoe.mongodb.net/boilermake?retryWrites=true&w=majority")
+  // .connect("mongodb://127.0.0.1:27017")
+  .then(() => {
+    console.log("Successfully connected to the database");
+    done.mongo = true;
+    return;
+  })
+  .catch((err) => {
+    console.log(err.message);
+    console.log("Unable to connect to the database");
+    process.exit(1);
+  });
