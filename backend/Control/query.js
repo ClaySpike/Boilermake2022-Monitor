@@ -5,5 +5,13 @@ Observation = require('../models/index').obs;
 exports.findByQuery = async (req, res) => {
     console.log(req.headers);
 
-    res.send(await Observation.find({}));
+    query = {};
+
+    if (!req.query.sn) {
+        query = {}
+    } else {
+        query = {'sn': req.query.sn};
+    }
+
+    res.send(await Observation.find(query));
 };
